@@ -2,8 +2,8 @@ import stats
 from flask import Flask, jsonify
 from flask_apscheduler import APScheduler
 
-CACHE_SIZE = 200
-POLL_INTERVAL_MINS = 1
+CACHE_SIZE = 500
+POLL_INTERVAL_MINS = 5
 app = Flask(__name__)
 
 
