@@ -1,26 +1,24 @@
 import stats
 from flask import Flask, jsonify
 from flask_apscheduler import APScheduler
-from collections import deque
 
 CACHE_SIZE = 200
 POLL_INTERVAL_MINS = 1
-cache = deque(list(reversed(stats.last_n(CACHE_SIZE))), maxlen=CACHE_SIZE)
 app = Flask(__name__)
 
 
 def update_stats():
     """snapshot stats and append to cache"""
     print('Updating stats')
-    data = stats.snapshot_stats()
-    cache.appendleft(data)
+    stats.snapshot_stats()
 
 
 @app.route('/')
 def history():
     """return the last CACHE_SIZE stats,
     most recent first"""
-    return jsonify(list(cache))
+    last = reversed(stats.last_n(CACHE_SIZE))
+    return jsonify(list(last))
 
 
 scheduler = APScheduler()
