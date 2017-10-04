@@ -1,7 +1,7 @@
 import stats
 from flask import Flask, jsonify
+from flask_apscheduler import APScheduler
 from collections import deque
-from apscheduler.schedulers.background import BackgroundScheduler
 
 CACHE_SIZE = 200
 POLL_INTERVAL_MINS = 5
@@ -21,13 +21,9 @@ def history():
     most recent first"""
     return jsonify(list(cache))
 
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.add_job('update_stats', update_stats, **{'trigger': 'interval', 'minutes': POLL_INTERVAL_MINS})
 
 if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(update_stats, **{'trigger': 'interval', 'minutes': POLL_INTERVAL_MINS})
-    scheduler.start()
-
-    try:
-        app.run()
-    except (KeyboardInterrupt, SystemExit):
-        scheduler.shutdown()
+    app.run()
