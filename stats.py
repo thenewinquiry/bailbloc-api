@@ -15,7 +15,7 @@ def get_stats():
     data = {}
     data['ticker'] = requests.get(TICKER_URL).json()['ticker']
     data['stats'] = requests.get(STATS_URL).json()
-    data['miners'] = requests.get(STATS_URL).json()
+    data['miners'] = requests.get(MINER_URL).json()
     data['timestamp'] = datetime.utcnow().timestamp()
     return data
 
