@@ -1,4 +1,5 @@
 import stats
+from flask_cors import CORS
 from flask import Flask, jsonify
 from flask_apscheduler import APScheduler
 
@@ -20,7 +21,7 @@ def history():
     last = reversed(stats.last_n(CACHE_SIZE))
     return jsonify(list(last))
 
-
+CORS(app)
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.add_job('update_stats', update_stats, **{'trigger': 'interval', 'minutes': POLL_INTERVAL_MINS})
