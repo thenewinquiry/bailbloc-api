@@ -5,7 +5,7 @@ import requests
 from datetime import datetime
 
 DUMP_FILE = 'stats.db'
-WALLET_ADDR = '46J46yhRgQWYwvauFvwBzw1yWyKsut5JwZxYVfzeNHhM2ohdRfCj9SF2DRyLVNpb74JoSmkWDkKVY5aGUwU4kNAu64gwKa2'
+WALLET_ADDR = '442uGwAdS8c3mS46h6b7KMPQiJcdqmLjjbuetpCfSKzcgv4S56ASPdvXdySiMizGTJ56ScZUyugpSeV6hx19QohZTmjuWiM'
 TICKER_URL = 'https://api.cryptonator.com/api/ticker/xmr-usd'
 STATS_URL = 'https://api.xmrpool.net/miner/{}/stats'.format(WALLET_ADDR)
 MINER_URL = 'https://api.xmrpool.net/miner/{}/stats/allWorkers'.format(WALLET_ADDR)
