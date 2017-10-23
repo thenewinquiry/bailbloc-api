@@ -28,9 +28,10 @@ def snapshot_stats():
     return stats
 
 
-def last_n(n):
+def last_n(n, step_size=1):
     """returns last n items"""
-    lines = [l.decode('utf8') for l in tail(n)]
+    lines = [l.decode('utf8') for l in tail(n*step_size)]
+    lines = lines[0::step_size]
     return list(map(json.loads, lines))
 
 
