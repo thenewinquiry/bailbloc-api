@@ -1,6 +1,6 @@
 import stats
 from flask_cors import CORS
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_apscheduler import APScheduler
 
 CACHE_SIZE = 500
@@ -22,7 +22,9 @@ def update_stats():
 def history():
     """return the last CACHE_SIZE stats,
     most recent first"""
-    last = reversed(stats.last_n(CACHE_SIZE, step_size=CACHE_STEP))
+    cache_size = request.args.get('n', CACHE_SIZE)
+    cache_step = request.args.get('step', CACHE_STEP)
+    last = reversed(stats.last_n(cache_size, step_size=cache_step))
     return jsonify(list(last))
 
 CORS(app)
