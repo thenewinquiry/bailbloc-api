@@ -24,7 +24,7 @@ def history():
     most recent first"""
     cache_size = request.args.get('n', CACHE_SIZE)
     cache_step = request.args.get('step', CACHE_STEP)
-    last = reversed(stats.last_n(cache_size, step_size=cache_step))
+    last = reversed(stats.last_n(int(cache_size), step_size=int(cache_step)))
     return jsonify(list(last))
 
 CORS(app)
