@@ -1,7 +1,10 @@
 import stats
+import config
+from raven import Client
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 from flask_apscheduler import APScheduler
+from raven.contrib.flask import Sentry
 
 CACHE_SIZE = 500
 CACHE_STEP = 12
@@ -10,12 +13,16 @@ POLL_INTERVAL_MINS = 5
 # e.g. if CACHE_STEP=12, POLL_INTERVAL_MINS=5, then timestep is every 60min
 
 app = Flask(__name__)
-
+sentry = Sentry(app, dsn=config.SENTRY_DSN)
+client = Client(config.SENTRY_DSN)
 
 def update_stats():
     """snapshot stats and append to cache"""
     print('Updating stats')
-    stats.snapshot_stats()
+    try:
+        stats.snapshot_stats()
+    except:
+        client.captureException()
 
 
 @app.route('/')
