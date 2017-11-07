@@ -8,12 +8,14 @@ DUMP_FILE = 'stats.db'
 WALLET_ADDR = '442uGwAdS8c3mS46h6b7KMPQiJcdqmLjjbuetpCfSKzcgv4S56ASPdvXdySiMizGTJ56ScZUyugpSeV6hx19QohZTmjuWiM'
 TICKER_URL = 'https://api.cryptonator.com/api/ticker/xmr-usd'
 STATS_URL = 'https://api.xmrpool.net/miner/{}/stats'.format(WALLET_ADDR)
+MINER_URL = 'https://api.xmrpool.net/miner/{}/identifiers'.format(WALLET_ADDR)
 
 
 def get_stats():
     data = {}
     data['ticker'] = requests.get(TICKER_URL).json()['ticker']
     data['stats'] = requests.get(STATS_URL).json()
+    data['miners'] = requests.get(MINER_URL).json()
     data['timestamp'] = datetime.utcnow().timestamp()
     return data
 
