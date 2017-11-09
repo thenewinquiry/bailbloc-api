@@ -7,10 +7,10 @@ from flask_apscheduler import APScheduler
 from raven.contrib.flask import Sentry
 
 CACHE_SIZE = 500
-CACHE_STEP = 12
-POLL_INTERVAL_MINS = 5
+CACHE_STEP = 4
+POLL_INTERVAL_MINS = 15
 # so we get every CACHE_STEP * POLL_INTERVAL_MINS timestep
-# e.g. if CACHE_STEP=12, POLL_INTERVAL_MINS=5, then timestep is every 60min
+# e.g. if CACHE_STEP=4, POLL_INTERVAL_MINS=15, then timestep is every 60min
 
 app = Flask(__name__)
 sentry = Sentry(app, dsn=config.SENTRY_DSN)
