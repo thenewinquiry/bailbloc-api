@@ -4,6 +4,7 @@ import json
 import filelock
 import requests
 from datetime import datetime
+from collections import defaultdict
 
 DUMP_FILE = 'stats.db'
 WALLET_ADDR = '442uGwAdS8c3mS46h6b7KMPQiJcdqmLjjbuetpCfSKzcgv4S56ASPdvXdySiMizGTJ56ScZUyugpSeV6hx19QohZTmjuWiM'
@@ -11,6 +12,12 @@ TICKER_URL = 'https://api.cryptonator.com/api/ticker/xmr-usd'
 STATS_URL = 'https://api.xmrpool.net/miner/{}/stats'.format(WALLET_ADDR)
 MINER_URL = 'https://api.xmrpool.net/miner/{}/identifiers'.format(WALLET_ADDR)
 LOCK = filelock.FileLock('/tmp/stats.lock')
+
+# cache results in memory, refresh at an interval
+# lower than the stats update interval
+CACHED = {}
+LAST_CHECKED = defaultdict(lambda: datetime.now())
+REFRESH_INTERVAL = 10
 
 
 def get_stats():
@@ -29,6 +36,17 @@ def snapshot_stats():
             f.write(json.dumps(stats))
             f.write('\n')
         return stats
+
+
+def last_n_with_cache(n, step_size=1):
+    time_since = (datetime.now() - LAST_CHECKED[n]).seconds/60
+    if n not in CACHED or time_since >= REFRESH_INTERVAL:
+        print('refreshing cache')
+        LAST_CHECKED[n] = datetime.now()
+        CACHED[n] = last_n(n, step_size)
+    else:
+        print('loading from cache')
+    return CACHED[n]
 
 
 def last_n(n, step_size=1):
