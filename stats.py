@@ -57,6 +57,9 @@ def last_n(n, step_size=1):
       last = lines[-1]
     lines = lines[0::step_size]
     if 'last' in locals() and  (lines[-1] != last):
+        # pop current last
+        lines.pop()
+        # add true last
         lines.append(last)
     return list(map(json.loads, lines))
 
