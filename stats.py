@@ -17,7 +17,7 @@ LOCK = filelock.FileLock('/tmp/stats.lock')
 # lower than the stats update interval
 CACHED = {}
 LAST_CHECKED = defaultdict(lambda: datetime.now())
-REFRESH_INTERVAL = 10
+REFRESH_INTERVAL = 60 * 5 # seconds
 
 
 def get_stats():
@@ -39,26 +39,32 @@ def snapshot_stats():
 
 
 def last_n_with_cache(n, step_size=1):
-    time_since = (datetime.now() - LAST_CHECKED[n]).seconds/60
+    time_since = (datetime.now() - LAST_CHECKED[n]).seconds
+    key = '{}:{}'.format(n, step_size)
     if n not in CACHED or time_since >= REFRESH_INTERVAL:
         print('refreshing cache')
-        LAST_CHECKED[n] = datetime.now()
-        CACHED[n] = last_n(n, step_size)
+        LAST_CHECKED[key] = datetime.now()
+        CACHED[key] = last_n(n, step_size)
     else:
         print('loading from cache')
-    return CACHED[n]
+    return CACHED[key]
 
 
 def last_n(n, step_size=1):
     """returns last n items"""
-    lines = [l.decode('utf8') for l in tail(n*step_size)]
+    lines = list(l.decode('utf8') for l in tail(n*step_size))
+    lines = list(reversed(lines))
     lines = lines[0::step_size]
-    return list(map(json.loads, lines))
+    return list((map(json.loads, lines)))
 
 
 # <https://stackoverflow.com/a/6813975>
 def tail(n):
     """returns last n lines from the dump"""
+    # check if the last line is an empty line
+    # so we can adjust n accordingly
+    if n > 0 and last_n(n=0):
+        n -= 1
     with LOCK.acquire(timeout=5):
         try:
             size = os.path.getsize(DUMP_FILE)
