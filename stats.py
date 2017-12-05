@@ -52,15 +52,7 @@ def last_n_with_cache(n, step_size=1):
 def last_n(n, step_size=1):
     """returns last n items"""
     lines = [l.decode('utf8') for l in tail(n*step_size)]
-    # this is a hack to make sure the latest value gets in there
-    if len(lines) > 0:
-      last = lines[-1]
     lines = lines[0::step_size]
-    if 'last' in locals() and  (lines[-1] != last):
-        # pop current last
-        lines.pop()
-        # add true last
-        lines.append(last)
     return list(map(json.loads, lines))
 
 
