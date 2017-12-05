@@ -42,11 +42,11 @@ def last_n_with_cache(n, step_size=1):
     key = '{}:{}'.format(n, step_size)
     time_since = (datetime.now() - LAST_CHECKED[key]).seconds
     if key not in CACHED or time_since >= REFRESH_INTERVAL:
-        print('refreshing cache')
+        print('refreshing cache:', key)
         LAST_CHECKED[key] = datetime.now()
         CACHED[key] = last_n(n, step_size)
     else:
-        print('loading from cache')
+        print('loading from cache:', key)
     return CACHED[key]
 
 
