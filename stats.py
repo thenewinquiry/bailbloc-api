@@ -41,7 +41,7 @@ def snapshot_stats():
 def last_n_with_cache(n, step_size=1):
     time_since = (datetime.now() - LAST_CHECKED[n]).seconds
     key = '{}:{}'.format(n, step_size)
-    if n not in CACHED or time_since >= REFRESH_INTERVAL:
+    if key not in CACHED or time_since >= REFRESH_INTERVAL:
         print('refreshing cache')
         LAST_CHECKED[key] = datetime.now()
         CACHED[key] = last_n(n, step_size)
