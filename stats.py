@@ -3,8 +3,8 @@ import mmap
 import json
 import filelock
 import requests
-from datetime import datetime
 from collections import defaultdict
+from datetime import datetime, timedelta
 
 DUMP_FILE = 'stats.db'
 WALLET_ADDR = '442uGwAdS8c3mS46h6b7KMPQiJcdqmLjjbuetpCfSKzcgv4S56ASPdvXdySiMizGTJ56ScZUyugpSeV6hx19QohZTmjuWiM'
@@ -44,13 +44,15 @@ def last_n_with_cache(n, step_size=1):
     time_since = (datetime.now() - LAST_CHECKED[key]).seconds
     if key not in CACHED or time_since >= REFRESH_INTERVAL:
         print('{}: refreshing cache:'.format(os.getpid()), key)
-        LAST_CHECKED[key] = datetime.now()
-        # try to refresh, but if not possible,
-        # just use existing
+        # try to refresh, but if not possible, just use existing
         try:
             CACHED[key] = last_n(n, step_size)
+            LAST_CHECKED[key] = datetime.now()
         except filelock.Timeout:
-            pass
+            if key not in CACHED:
+                CACHED[key] = []
+            # set last checked time to force a re-check next query
+            LAST_CHECKED[key] = datetime.now() - timedelta(seconds=REFRESH_INTERVAL)
     else:
         print('{}: loading from cache:'.format(os.getpid()), key)
     return CACHED[key]
