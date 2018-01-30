@@ -45,7 +45,12 @@ def last_n_with_cache(n, step_size=1):
     if key not in CACHED or time_since >= REFRESH_INTERVAL:
         print('{}: refreshing cache:'.format(os.getpid()), key)
         LAST_CHECKED[key] = datetime.now()
-        CACHED[key] = last_n(n, step_size)
+        # try to refresh, but if not possible,
+        # just use existing
+        try:
+            CACHED[key] = last_n(n, step_size)
+        except filelock.Timeout:
+            pass
     else:
         print('{}: loading from cache:'.format(os.getpid()), key)
     return CACHED[key]
