@@ -21,11 +21,11 @@ REFRESH_INTERVAL = 60 * 5 # seconds
 
 
 def get_stats():
+    miners = requests.get(MINER_URL).json()
     data = {}
     data['ticker'] = requests.get(TICKER_URL).json()['ticker']
     data['stats'] = requests.get(STATS_URL).json()
-    data['miners'] = requests.get(MINER_URL).json()
-    data['n_miners'] = len(data['miners'])
+    data['n_miners'] = len(miners)
     data['timestamp'] = datetime.utcnow().timestamp()
     return data
 
